@@ -4,8 +4,18 @@ import MatrixInput from "./components/MatrixInput";
 import ResultDisplay from "./components/ResultDisplay";
 import Header from "./components/Header";
 import DrawerMenu from "./components/DrawerMenu";
-import { CircularProgress, Box, CssBaseline, Typography } from "@mui/material";
-import { calculateFuel, fetchPreviousResults } from "./services/apiService";
+import {
+  CircularProgress,
+  Box,
+  CssBaseline,
+  Typography,
+  Button,
+} from "@mui/material";
+import {
+  calculateFuel,
+  fetchPreviousResults,
+  fetchMapByMapId,
+} from "./services/apiService";
 import { jwtDecode } from "jwt-decode";
 
 function App() {
@@ -15,6 +25,14 @@ function App() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [username, setUsername] = useState("");
   const [history, setHistory] = useState([]); // State to store the history
+  const [rows, setRows] = useState(3); // Default value is 3, but this can be adjusted
+  const [cols, setCols] = useState(3); // Default value is 3, but this can be adjusted
+  const [p, setP] = useState(3); // Default value for number of chests
+  const [matrix, setMatrix] = useState(
+    Array(3)
+      .fill()
+      .map(() => Array(3).fill(1))
+  ); // Default 3x3 matrix filled with 1
 
   // Check for token and parse username on initial load
   useEffect(() => {
@@ -66,6 +84,30 @@ function App() {
   const handleDrawerToggle = () => {
     setDrawerOpen(!drawerOpen);
   };
+  const comeBackToOldMap = async (mapId) => {
+    try {
+      // Fetch the map data for the given mapId
+      const response = await fetchMapByMapId(mapId);
+
+      // Extract data and construct the matrix
+      const { rowsCount, colsCount, p, treasureCells } = response.data;
+      const matrix = Array(rowsCount)
+        .fill()
+        .map(() => Array(colsCount).fill(0));
+
+      treasureCells.forEach((cell) => {
+        matrix[cell.rowNum][cell.colNum] = cell.chestNumber;
+      });
+
+      // Update state
+      setRows(rowsCount);
+      setCols(colsCount);
+      setP(p);
+      setMatrix(matrix);
+    } catch (error) {
+      console.error("Failed to fetch map data:", error);
+    }
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("jwtToken");
@@ -115,18 +157,27 @@ function App() {
         onClose={handleDrawerToggle}
         onLogout={handleLogout}
       />
-      <Box component="main"  sx={{
-    display: "flex",
-    flexGrow: 1,
-    p: 3,
-    paddingTop: "64px", // Adjust this value if your header height is different
-  }}>
+      <Box
+        component="main"
+        sx={{
+          display: "flex",
+          flexGrow: 1,
+          p: 3,
+          paddingTop: "64px",
+        }}
+      >
         {!isAuthenticated ? (
           <LoginPage onLoginSuccess={handleLoginSuccess} />
         ) : (
           <>
             <Box sx={{ flex: 2, marginRight: 2 }}>
-              <MatrixInput onSubmit={handleSubmit} />
+              <MatrixInput
+                rows={rows}
+                cols={cols}
+                p={p}
+                matrix={matrix}
+                onSubmit={handleSubmit}
+              />
               {loading && (
                 <Box
                   sx={{
@@ -146,8 +197,8 @@ function App() {
                 padding: 2,
                 backgroundColor: "#f5f5f5",
                 borderRadius: 2,
-                maxHeight: "400px", // Set a fixed height for the container
-                overflowY: "auto", // Enable vertical scrolling
+                maxHeight: "400px",
+                overflowY: "auto",
               }}
             >
               <Typography variant="h6" gutterBottom>
@@ -157,6 +208,13 @@ function App() {
                 <Box key={index} sx={{ marginBottom: 2 }}>
                   <Typography variant="body1" fontWeight="bold">
                     Map {entry.mapId}
+                    <Button
+                      onClick={() => comeBackToOldMap(entry.mapId)}
+                      color="primary"
+                      variant="outlined"
+                    >
+                      Come back to this map
+                    </Button>
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
                     Rows: {entry.rowsCount}, Columns: {entry.colsCount}, P:{" "}

@@ -10,53 +10,49 @@ import {
   FormHelperText,
 } from "@mui/material";
 
-const MatrixInput = ({ onSubmit }) => {
-  const [rows, setRows] = useState(3);
-  const [cols, setCols] = useState(3);
-  const [p, setP] = useState(3); // Default value for `p`
-  const [matrix, setMatrix] = useState(
-    Array(3)
-      .fill()
-      .map(() => Array(3).fill(1))
-  );
+const MatrixInput = ({ rows, cols, p, matrix, onSubmit }) => {
+  const [currentRows, setRows] = useState(rows);
+  const [currentCols, setCols] = useState(cols);
+  const [currentP, setP] = useState(p);
+  const [currentMatrix, setMatrix] = useState(matrix);
   const [error, setError] = useState("");
 
+  // Update the state when the props change
   useEffect(() => {
-    setMatrix(
-      Array(rows)
-        .fill()
-        .map(() => Array(cols).fill(1))
-    );
-  }, [rows, cols]);
+    setRows(rows);
+    setCols(cols);
+    setP(p);
+    setMatrix(matrix);
+  }, [rows, cols, p, matrix]);
 
   const handleMatrixChange = (r, c, value) => {
-    const newMatrix = [...matrix];
+    const newMatrix = [...currentMatrix];
     newMatrix[r][c] = value;
     setMatrix(newMatrix);
   };
 
   const handleRandomize = () => {
-    const newMatrix = Array(rows)
+    const newMatrix = Array(currentRows)
       .fill()
       .map(() =>
-        Array(cols)
+        Array(currentCols)
           .fill()
-          .map(() => Math.floor(Math.random() * p) + 1)
+          .map(() => Math.floor(Math.random() * currentP) + 1)
       );
     setMatrix(newMatrix);
   };
 
   const handleSubmit = () => {
-    const isValid = matrix.every((row) =>
-      row.every((cell) => cell > 0 && cell <= p)
+    const isValid = currentMatrix.every((row) =>
+      row.every((cell) => cell > 0 && cell <= currentP)
     );
     if (!isValid) {
-      setError(`All matrix cells must contain a number between 1 and ${p}.`);
+      setError(`All matrix cells must contain a number between 1 and ${currentP}.`);
       return;
     }
 
     setError("");
-    onSubmit({ rows, cols, p, matrix });
+    onSubmit({ rows: currentRows, cols: currentCols, p: currentP, matrix: currentMatrix });
   };
 
   return (
@@ -74,7 +70,7 @@ const MatrixInput = ({ onSubmit }) => {
           <TextField
             label="Rows"
             type="number"
-            value={rows}
+            value={currentRows}
             onChange={(e) => setRows(parseInt(e.target.value) || 1)}
             fullWidth
             margin="normal"
@@ -83,7 +79,7 @@ const MatrixInput = ({ onSubmit }) => {
           <TextField
             label="Columns"
             type="number"
-            value={cols}
+            value={currentCols}
             onChange={(e) => setCols(parseInt(e.target.value) || 1)}
             fullWidth
             margin="normal"
@@ -92,24 +88,24 @@ const MatrixInput = ({ onSubmit }) => {
           <TextField
             label="Number of Chests (p)"
             type="number"
-            value={p}
+            value={currentP}
             onChange={(e) => setP(parseInt(e.target.value) || 1)}
             fullWidth
             margin="normal"
-            inputProps={{ min: 1, max: rows * cols }}
+            inputProps={{ min: 1, max: currentRows * currentCols }}
           />
         </Box>
         <Grid container spacing={2} justifyContent="center">
-          {matrix.map((row, rIndex) =>
+          {currentMatrix.map((row, rIndex) =>
             row.map((col, cIndex) => (
               <Grid
                 item
-                xs={Math.max(12 / cols, 2)}
+                xs={Math.max(12 / currentCols, 2)}
                 key={`${rIndex}-${cIndex}`}
               >
                 <TextField
                   type="number"
-                  value={matrix[rIndex][cIndex]}
+                  value={currentMatrix[rIndex][cIndex]}
                   onChange={(e) =>
                     handleMatrixChange(
                       rIndex,
@@ -117,7 +113,7 @@ const MatrixInput = ({ onSubmit }) => {
                       parseInt(e.target.value) || 1
                     )
                   }
-                  inputProps={{ min: 1, max: p }}
+                  inputProps={{ min: 1, max: currentP }}
                   fullWidth
                 />
               </Grid>
