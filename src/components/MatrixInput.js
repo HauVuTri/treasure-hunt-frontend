@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   TextField,
   Button,
@@ -7,18 +7,26 @@ import {
   Typography,
   Paper,
   Box,
-  FormHelperText
-} from '@mui/material';
+  FormHelperText,
+} from "@mui/material";
 
 const MatrixInput = ({ onSubmit }) => {
   const [rows, setRows] = useState(3);
   const [cols, setCols] = useState(3);
   const [p, setP] = useState(3); // Default value for `p`
-  const [matrix, setMatrix] = useState(Array(3).fill().map(() => Array(3).fill(1)));
-  const [error, setError] = useState('');
+  const [matrix, setMatrix] = useState(
+    Array(3)
+      .fill()
+      .map(() => Array(3).fill(1))
+  );
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    setMatrix(Array(rows).fill().map(() => Array(cols).fill(1)));
+    setMatrix(
+      Array(rows)
+        .fill()
+        .map(() => Array(cols).fill(1))
+    );
   }, [rows, cols]);
 
   const handleMatrixChange = (r, c, value) => {
@@ -27,14 +35,27 @@ const MatrixInput = ({ onSubmit }) => {
     setMatrix(newMatrix);
   };
 
+  const handleRandomize = () => {
+    const newMatrix = Array(rows)
+      .fill()
+      .map(() =>
+        Array(cols)
+          .fill()
+          .map(() => Math.floor(Math.random() * p) + 1)
+      );
+    setMatrix(newMatrix);
+  };
+
   const handleSubmit = () => {
-    const isValid = matrix.every(row => row.every(cell => cell > 0 && cell <= p));
+    const isValid = matrix.every((row) =>
+      row.every((cell) => cell > 0 && cell <= p)
+    );
     if (!isValid) {
       setError(`All matrix cells must contain a number between 1 and ${p}.`);
       return;
     }
 
-    setError('');
+    setError("");
     onSubmit({ rows, cols, p, matrix });
   };
 
@@ -44,7 +65,12 @@ const MatrixInput = ({ onSubmit }) => {
         <Typography variant="h4" gutterBottom align="center">
           Enter Treasure Map Details
         </Typography>
-        <Box component="form" noValidate autoComplete="off" sx={{ marginBottom: 2 }}>
+        <Box
+          component="form"
+          noValidate
+          autoComplete="off"
+          sx={{ marginBottom: 2 }}
+        >
           <TextField
             label="Rows"
             type="number"
@@ -76,11 +102,21 @@ const MatrixInput = ({ onSubmit }) => {
         <Grid container spacing={2} justifyContent="center">
           {matrix.map((row, rIndex) =>
             row.map((col, cIndex) => (
-              <Grid item xs={Math.max(12 / cols, 2)} key={`${rIndex}-${cIndex}`}>
+              <Grid
+                item
+                xs={Math.max(12 / cols, 2)}
+                key={`${rIndex}-${cIndex}`}
+              >
                 <TextField
                   type="number"
                   value={matrix[rIndex][cIndex]}
-                  onChange={(e) => handleMatrixChange(rIndex, cIndex, parseInt(e.target.value) || 1)}
+                  onChange={(e) =>
+                    handleMatrixChange(
+                      rIndex,
+                      cIndex,
+                      parseInt(e.target.value) || 1
+                    )
+                  }
                   inputProps={{ min: 1, max: p }}
                   fullWidth
                 />
@@ -95,10 +131,19 @@ const MatrixInput = ({ onSubmit }) => {
         )}
         <Button
           variant="contained"
+          color="secondary"
+          onClick={handleRandomize}
+          fullWidth
+          sx={{ marginTop: 3 }}
+        >
+          Randomize
+        </Button>
+        <Button
+          variant="contained"
           color="primary"
           onClick={handleSubmit}
           fullWidth
-          sx={{ marginTop: 3 }}
+          sx={{ marginTop: 2 }}
         >
           Calculate Fuel
         </Button>
