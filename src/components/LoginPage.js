@@ -1,21 +1,65 @@
 import React, { useState } from 'react';
-import { Avatar, Button, TextField, Grid, Box, Typography, Container, CssBaseline } from '@mui/material';
+import {
+  Avatar,
+  Button,
+  TextField,
+  Grid,
+  Box,
+  Typography,
+  Container,
+  CssBaseline,
+  IconButton,
+  InputAdornment,
+} from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { login } from '../services/apiService';
 
 const LoginPage = ({ onLoginSuccess }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
+  const [usernameError, setUsernameError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+
+  const validateInputs = () => {
+    let isValid = true;
+
+    if (!username) {
+      setUsernameError('Username is required');
+      isValid = false;
+    } else {
+      setUsernameError('');
+    }
+
+    if (!password) {
+      setPasswordError('Password is required');
+      isValid = false;
+    } else {
+      setPasswordError('');
+    }
+
+    return isValid;
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    if (!validateInputs()) {
+      return;
+    }
+
     try {
       await login(username, password);
       onLoginSuccess();
     } catch (error) {
       setError('Login failed. Please check your credentials and try again.');
     }
+  };
+
+  const handleClickShowPassword = () => {
+    setShowPassword(!showPassword);
   };
 
   return (
@@ -41,24 +85,41 @@ const LoginPage = ({ onLoginSuccess }) => {
             required
             fullWidth
             id="username"
-            label="Username || Eg: awing"
+            label="Username - Eg: awing"
             name="username"
             autoComplete="username"
             autoFocus
             value={username}
             onChange={(e) => setUsername(e.target.value)}
+            error={!!usernameError}
+            helperText={usernameError}
           />
           <TextField
             margin="normal"
             required
             fullWidth
             name="password"
-            label="Password || Eg: 123123 "
-            type="password"
+            label="Password - Eg: 123123"
+            type={showPassword ? 'text' : 'password'}
             id="password"
             autoComplete="current-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            error={!!passwordError}
+            helperText={passwordError}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={handleClickShowPassword}
+                    edge="end"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
           {error && (
             <Typography color="error" variant="body2" align="center">

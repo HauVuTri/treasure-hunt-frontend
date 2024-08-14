@@ -19,10 +19,10 @@ apiClient.interceptors.request.use((config) => {
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    const isLoginPath = error.config.url.toLower().includes("authentication/login");
 
+    const isLoginPath = error.config.url.includes("authentication/login");
     if (
-      !isLoginPath &&
+      !isLoginPath && 
       error.response &&
       (error.response.status === 401 || error.response.status === 403)
     ) {
