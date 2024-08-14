@@ -8,6 +8,7 @@ import {
   Paper,
   Box,
   FormHelperText,
+  Input,
 } from "@mui/material";
 
 const MatrixInput = ({ rows, cols, p, matrix, onSubmit }) => {
@@ -24,6 +25,22 @@ const MatrixInput = ({ rows, cols, p, matrix, onSubmit }) => {
     setP(p);
     setMatrix(matrix);
   }, [rows, cols, p, matrix]);
+
+  // Adjust the matrix size when rows or columns change
+  useEffect(() => {
+    const newMatrix = Array(currentRows)
+      .fill()
+      .map((_, rIndex) =>
+        Array(currentCols)
+          .fill()
+          .map((_, cIndex) =>
+            currentMatrix[rIndex] && currentMatrix[rIndex][cIndex]
+              ? currentMatrix[rIndex][cIndex]
+              : 1
+          )
+      );
+    setMatrix(newMatrix);
+  }, [currentRows, currentCols]);
 
   const handleMatrixChange = (r, c, value) => {
     const newMatrix = [...currentMatrix];
@@ -100,10 +117,10 @@ const MatrixInput = ({ rows, cols, p, matrix, onSubmit }) => {
             row.map((col, cIndex) => (
               <Grid
                 item
-                xs={Math.max(12 / currentCols, 2)}
+                sx={{ width: `${100 / currentCols}%` }} // Set width as a percentage
                 key={`${rIndex}-${cIndex}`}
               >
-                <TextField
+                <Input
                   type="number"
                   value={currentMatrix[rIndex][cIndex]}
                   onChange={(e) =>
@@ -115,6 +132,9 @@ const MatrixInput = ({ rows, cols, p, matrix, onSubmit }) => {
                   }
                   inputProps={{ min: 1, max: currentP }}
                   fullWidth
+                  sx={{
+                    padding: '0px' 
+                  }}
                 />
               </Grid>
             ))

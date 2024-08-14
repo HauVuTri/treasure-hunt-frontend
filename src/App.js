@@ -5,6 +5,7 @@ import ResultDisplay from "./components/ResultDisplay";
 import Header from "./components/Header";
 import DrawerMenu from "./components/DrawerMenu";
 import {
+  Backdrop,
   CircularProgress,
   Box,
   CssBaseline,
@@ -19,7 +20,7 @@ import {
 import { jwtDecode } from "jwt-decode";
 
 function App() {
-  const [fuelUsed, setFuelUsed] = useState(-9999);
+  const [fuelUsed, setFuelUsed] = useState(-9999); //Assume that -9999 is not show status
   const [loading, setLoading] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -86,8 +87,10 @@ function App() {
   };
   const comeBackToOldMap = async (mapId) => {
     try {
+      setLoading(true); // Start loading
       // Fetch the map data for the given mapId
       const response = await fetchMapByMapId(mapId);
+      setLoading(false); // Stop loading
 
       // Extract data and construct the matrix
       const { rowsCount, colsCount, p, treasureCells } = response.data;
@@ -104,6 +107,7 @@ function App() {
       setCols(colsCount);
       setP(p);
       setMatrix(matrix);
+      setFuelUsed(-9999);
     } catch (error) {
       console.error("Failed to fetch map data:", error);
     }
@@ -186,7 +190,13 @@ function App() {
                     marginTop: 4,
                   }}
                 >
-                  <CircularProgress />
+                  <Backdrop
+                    open={loading}
+                    sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                  >
+                    <CircularProgress color="inherit" />
+                  </Backdrop>
+                  {/* <CircularProgress /> */}
                 </Box>
               )}
               {!loading && <ResultDisplay fuelUsed={fuelUsed} />}

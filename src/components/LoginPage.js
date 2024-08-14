@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Avatar,
   Button,
@@ -10,35 +10,38 @@ import {
   CssBaseline,
   IconButton,
   InputAdornment,
-} from '@mui/material';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import { login } from '../services/apiService';
+  Backdrop,
+  CircularProgress,
+} from "@mui/material";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import { login } from "../services/apiService";
 
 const LoginPage = ({ onLoginSuccess }) => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
-  const [usernameError, setUsernameError] = useState('');
-  const [passwordError, setPasswordError] = useState('');
+  const [error, setError] = useState("");
+  const [usernameError, setUsernameError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const validateInputs = () => {
     let isValid = true;
 
     if (!username) {
-      setUsernameError('Username is required');
+      setUsernameError("Username is required");
       isValid = false;
     } else {
-      setUsernameError('');
+      setUsernameError("");
     }
 
     if (!password) {
-      setPasswordError('Password is required');
+      setPasswordError("Password is required");
       isValid = false;
     } else {
-      setPasswordError('');
+      setPasswordError("");
     }
 
     return isValid;
@@ -51,10 +54,14 @@ const LoginPage = ({ onLoginSuccess }) => {
     }
 
     try {
+      setLoading(true);
       await login(username, password);
       onLoginSuccess();
     } catch (error) {
-      setError('Login failed. Please check your credentials and try again.');
+      setError("Login failed. Please check your credentials and try again.");
+    }
+    finally{
+      setLoading(false);
     }
   };
 
@@ -68,12 +75,12 @@ const LoginPage = ({ onLoginSuccess }) => {
       <Box
         sx={{
           marginTop: 8,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
         }}
       >
-        <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+        <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
           <LockOutlinedIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
@@ -100,7 +107,7 @@ const LoginPage = ({ onLoginSuccess }) => {
             fullWidth
             name="password"
             label="Password - Eg: 123123"
-            type={showPassword ? 'text' : 'password'}
+            type={showPassword ? "text" : "password"}
             id="password"
             autoComplete="current-password"
             value={password}
@@ -136,13 +143,24 @@ const LoginPage = ({ onLoginSuccess }) => {
           </Button>
           <Grid container>
             <Grid item xs>
-              <Button variant="text" onClick={() => alert('Forgot password functionality not implemented')}>
+              <Button
+                variant="text"
+                onClick={() =>
+                  alert("Forgot password functionality not implemented")
+                }
+              >
                 Forgot password?
               </Button>
             </Grid>
           </Grid>
         </Box>
       </Box>
+      <Backdrop
+        open={loading}
+        sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </Container>
   );
 };

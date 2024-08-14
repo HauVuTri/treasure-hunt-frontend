@@ -1,70 +1,58 @@
-# Getting Started with Create React App
+# Treasure Hunt Frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Overview
 
-## Available Scripts
+This is the frontend application for the Treasure Hunt project. It is built using React.js and Material-UI. The frontend interacts with the backend API to perform treasure map calculations, manage user sessions, and display historical results.
 
-In the project directory, you can run:
+## Features
 
-### `npm start`
+- User login and authentication
+- Dynamic treasure map input and calculation
+- Display of historical calculation results
+- Responsive UI built with Material-UI
+- Loading indicator while performing API calls
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Technologies Used
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- React.js
+- Material-UI
+- Axios for API calls
 
-### `npm test`
+## Prerequisites
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- Node.js (v14 or higher)
+- npm or yarn
 
-### `npm run build`
+## Getting Started
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+1. **Clone the repository:**
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+   ```bash
+   git clone https://github.com/yourusername/treasure-hunt-frontend.git
+   cd treasure-hunt-frontend
+   ```
+2. Install dependencies:
+```
+npm install
+```
+3. Set up environment variables:
+REACT_APP_API_BASE_URL=https://localhost:7234/api
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+4.Run the application:
+```
+npm start 
+```
 
-### `npm run eject`
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+**Key Features**
+Authentication
+Users can log in using their credentials. The app uses JWT for session management.
+The LoginPage component handles user authentication.
+Treasure Map Calculation
+The MatrixInput component allows users to input the dimensions of the treasure map and the chest numbers.
+The ResultDisplay component shows the fuel needed to retrieve the treasure based on the backend calculations.
+Calculation History
+The application stores and displays a history of past treasure map calculations.
+Users can revert to a previous map configuration directly from the history list.
+Loading Indicator
+The app displays a loading overlay (using Material-UI's Backdrop and CircularProgress) when interacting with the API, ensuring a smooth user experience.
